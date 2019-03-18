@@ -1,0 +1,197 @@
+{% load staticfiles %}
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>{{ uname }}博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="/static/images/bitbug_favicon.ico" type="image/x-icon" />
+  <link href="/static/css/base.css" rel="stylesheet">
+  <link href="/static/css/index.css" rel="stylesheet">
+  <link href="/static/css/m.css" rel="stylesheet">
+  <script src="/static/js/jquery.min.js" type="text/javascript"></script>
+  <script src="/static/js/jquery.easyfader.min.js"></script>
+  <script src="/static/js/scrollReveal.js"></script>
+  <script src="/static/js/common.js"></script>
+    {% block style %}
+    {% endblock %}
+</head>
+
+<body>
+  <header id="header">
+    <!--menu begin-->
+    <div class="menu">
+      <nav class="nav" id="topnav">
+        <h1 class="logo"><a href="">{{ uname }}的博客</a></h1>
+        <li><a href="/index/">首页</a> </li>
+        <li><a href="/topic/">话题</a>
+        </li>
+        <li><a href="/photo/">我的相册</a>
+        </li>
+        <li><a href="/date/">时间轴</a> </li>
+        <li><a href="/leave/">留言</a> </li>
+        <li><a href="/about/">关于我</a> </li>
+        <li><a href="/publish/">发表博客</a></li>
+      </nav>
+    </div>
+      {% block login %}
+    <div id="login">
+        <form action="/index/" class="parent">
+{#            {% csrf_token %}#}
+            <input type="text" class="search" placeholder="搜索">
+            <input type="button" name="" id="" class="btn">
+        </form>
+    </div>
+      {% endblock %}
+
+    <!--menu end-->
+  </header>
+    {% block pagebg %}
+    {% endblock %}
+  <article>
+    {% block banner %}
+    <!--banner begin-->
+    <div class="picsbox">
+      <div class="banner">
+        <div id="banner" class="fader">
+            {% for titlethree in titlethrees|slice:'0:3'%}
+          <li class="slide">
+              <a href="/info?id={{ titlethree.id }}" target="_blank">
+                  <img src="/static/{{ titlethree.images }}">
+                  <span class="imginfo">{{ titlethree.title }}</span>
+              </a>
+          </li>
+            {% endfor %}
+          <div class="fader_controls">
+            <div class="page prev" data-target="prev">&lsaquo;</div>
+            <div class="page next" data-target="next">&rsaquo;</div>
+            <ul class="pager_list">
+            </ul>
+          </div>
+        </div>
+      </div>
+      <!--banner end-->
+      <div class="sidebar">
+          <div class="guanzhu" id="follow-us">
+            {% if user %}
+                <h2 class="hometitle">{{ uname }}</h2>
+
+            {% endif %}
+            <ul>
+              <li class="sina"><a href="#" target="_blank"><span>文章</span>1</a></li>
+              <li class="tencent"><a href="#" target="_blank"><span>合集</span>XXX</a></li>
+              <li class="qq"><a href="#" target="_blank"><span>喜欢</span>XXXXXX</a></li>
+              <li class="email"><a href="#" target="_blank"><span>关注</span>tedu.cn</a></li>
+            </ul>
+          </div>
+      </div>
+    </div>
+    <div class="blank"></div>
+    {% endblock %}
+    {% block tagtopic %}
+    <!--blogsbox begin-->
+    <div class="blogsbox">
+        {% for topic in topics %}
+      <div class="blogs" data-scroll-reveal="enter bottom over 1s">
+        <h3 class="blogtitle">
+            <a href="/info?id={{topic.id}}" target="_blank">{{ topic.title }}</a>
+        </h3>
+            {% if topic.images %}
+        <span class="bigpic">
+            <a href="/info?id={{topic.id}}" title="">
+                <img src="/static/{{ topic.images }}" alt="">
+            </a>
+            {% endif %}
+        </span>
+        <p class="blogtext">
+            {{topic.content}}
+        </p>
+        <div class="bloginfo">
+          <ul>
+            <li class="author"><a href="/author?id={{ topic.id }}">{{ topic.users.uname }}</a></li>
+            <li class="lmname"><a href="/taglist?name={{ topic.category.id }}">{{ topic.category.cate_name }}</a></li>
+            <li class="timer">{{ topic.pub_date }}</li>
+            <li class="view">
+                {% if topic.read_num != None %}
+                <span>{{ topic.read_num }}</span>
+                已阅读
+                {% else %}
+                未阅读
+                {% endif %}
+            </li>
+            <li class="like"><a href="#">9999</a></li>
+          </ul>
+        </div>
+      </div>
+        {% endfor %}
+    </div>
+    {% endblock %}
+    <!--blogsbox end-->
+
+    <div class="sidebar">
+    {% block side %}
+      <div class="zhuanti">
+        <h2 class="hometitle">热门排行</h2>
+          {% for recommend in recommends %}
+        <ul>
+          <li> <i><img src="/static/{{ recommend.images }}"></i>
+            <p>{{ recommend.title }}<span><a href="/info?id={{ recommend.id }}">阅读</a></span> </p>
+          </li>
+        </ul>
+          {% endfor %}
+      </div>
+      <div class="tuijian">
+        <h2 class="hometitle">推荐文章</h2>
+          {% for result in results %}
+              {% if forloop.first %}
+        <ul class="tjpic">
+          <a href="/info?id={{ result.id }}">
+              <img src="/static/{{ result.images }}">
+          </a>
+          <p><a href="/info?id={{ result.id }}">{{ result.title }}</a></p>
+        </ul>
+              {% else %}
+        <ul class="sidenews">
+          <li >
+              <a href="/info?id={{ result.id }}">
+                  <img src="/static/{{ result.images }}" style="margin-left:0px;">
+              </a>
+            <p>
+                <a href="/info?id={{ result.id }}">{{ result.title }}</a>
+            </p>
+            <span>{{ result.pub_date }}</span>
+          </li>
+        </ul>
+              {% endif %}
+          {% endfor %}
+      </div>
+
+      <div class="links">
+        <h2 class="hometitle">友情链接</h2>
+        <ul>
+            {% for topicthree in topicthrees %}
+          <li><a href='/taglist?name={{ topicthree.id }}' target="_blank">{{ topicthree.title }}</a></li>
+            {% endfor %}
+        </ul>
+      </div>
+  {% endblock %}
+      <div class="guanzhu" id="follow-us">
+        <h2 class="hometitle">关注我吧 么哒！</h2>
+        <ul>
+          <li class="sina"><a href=""><span>微信号</span>SUNingggg</a></li>
+          <li class="tencent"><a href=""><span>QQ</span>1434985179</a></li>
+          <li class="qq"><a href=""><span>邮箱</span>jiaorongb@163.com</a></li>
+          <li class="email"><a href=""><span>微博</span>Saynoboy</a></li>
+          <li class="wxgzh"><a href=""><span>联系电话</span>17762560323</a></li>
+        </ul>
+      </div>
+    </div>
+
+  </article>
+  <footer id="footer">
+    <p>Design by <a href=# target="_blank">个人博客</a> <a href="#">备XXXXXXXXX号-1</a></p>
+  </footer>
+  <a href="#" class="cd-top">Top</a>
+</body>
+
+</html>
